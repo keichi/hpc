@@ -303,9 +303,6 @@ def main():
         model.compile(optimizer=opt, loss=train_config['loss'],
                       metrics=train_config['metrics'])
 
-    if dist.rank == 0:
-        model.summary()
-
     # Save configuration to output directory
     if dist.rank == 0:
         config['n_ranks'] = dist.size
