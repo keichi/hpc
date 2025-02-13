@@ -31,6 +31,7 @@
 import os
 import shutil
 import logging
+from multiprocessing.pool import ThreadPool
 
 
 def stage_files(input_dir, output_dir, n_files, rank=0, size=1):
@@ -54,8 +55,13 @@ def stage_files(input_dir, output_dir, n_files, rank=0, size=1):
 
     # Copy my chunk into the output directory
     os.makedirs(output_dir, exist_ok=True)
-    for f in files[rank::size]:
-        logging.debug(f'Staging file {f}')
-        shutil.copyfile(os.path.join(input_dir, f),
-                        os.path.join(output_dir, f))
+
+    with ThreadPool() as pool:
+        def copy(f):
+            logging.debug(f'Staging file {f}')
+            shutil.copyfile(os.path.join(input_dir, f),
+                            os.path.join(output_dir, f))
+
+        pool.map(copy, files[rank::size])
+
     logging.debug('Data staging completed')
