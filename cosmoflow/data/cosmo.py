@@ -109,7 +109,8 @@ def construct_dataset(file_dir, n_samples, batch_size, n_epochs,
 
     # Parse TFRecords
     parse_data = partial(_parse_data, shape=sample_shape, apply_log=apply_log)
-    wrap_dataset = partial(tf.data.TFRecordDataset, compression_type=compression)
+    wrap_dataset = partial(tf.data.TFRecordDataset, compression_type=compression,
+                           num_parallel_reads=tf.data.AUTOTUNE)
     data = data.apply(wrap_dataset).map(parse_data, num_parallel_calls=n_parallel_reads)
 
     # Parallelize reading with interleave - no benefit?
