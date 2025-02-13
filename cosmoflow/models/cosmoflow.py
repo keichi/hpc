@@ -59,8 +59,11 @@ def build_model(input_shape, target_size,
 
     model = tf.keras.models.Sequential()
 
+    model.add(layers.Lambda(lambda x: tf.math.log(tf.cast(x, tf.float32) + tf.constant(1.)),
+                            input_shape=input_shape))
+
     # First convolutional layer
-    model.add(layers.Conv3D(conv_size, input_shape=input_shape, **conv_args))
+    model.add(layers.Conv3D(conv_size, **conv_args))
     model.add(hidden_activation())
     model.add(pooling_type(pool_size=2))
 

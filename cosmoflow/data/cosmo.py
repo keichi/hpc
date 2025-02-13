@@ -61,18 +61,8 @@ def _parse_data(sample_proto, shape, apply_log=False):
     parsed_example = tf.io.parse_single_example(
         sample_proto, features=feature_spec)
 
-    # Decode the bytes data, convert to float
-    x = tf.io.decode_raw(parsed_example['x'], tf.int16)
-    x = tf.cast(tf.reshape(x, shape), tf.float32)
+    x = tf.reshape(tf.io.decode_raw(parsed_example['x'], tf.int16), shape)
     y = parsed_example['y']
-
-    # Data normalization/scaling
-    if apply_log:
-        # Take logarithm of the data spectrum
-        x = tf.math.log(x + tf.constant(1.))
-    else:
-        # Traditional mean normalization
-        x /= (tf.reduce_sum(x) / np.prod(shape))
 
     return x, y
 
