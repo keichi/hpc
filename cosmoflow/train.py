@@ -338,7 +338,8 @@ def main():
             os.path.join(config['output_dir'], 'history.csv'), append=args.resume))
         if args.tensorboard:
             callbacks.append(tf.keras.callbacks.TensorBoard(
-                os.path.join(config['output_dir'], 'tensorboard')))
+                log_dir=os.path.join(config['output_dir'], 'tensorboard')),
+                profile_batch=(100, 110))
         if args.mlperf:
             callbacks.append(MLPerfLoggingCallback())
         if args.wandb:
