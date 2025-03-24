@@ -126,11 +126,10 @@ def construct_dataset(file_dir, n_samples, batch_size, n_epochs,
         data = data.shuffle(shuffle_buffer_size)
 
     # Construct batches
-    data = data.repeat(n_epochs)
     data = data.batch(batch_size, drop_remainder=True)
 
     # Prefetch to device
-    return data.prefetch(prefetch), n_steps
+    return data.apply(tf.data.experimental.prefetch_to_device("/gpu:0")), n_steps
 
 
 def get_datasets(data_dir, sample_shape, n_train, n_valid,
